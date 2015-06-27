@@ -8,14 +8,22 @@ describe("figure", function() {
     
     });
     
+    function isReflectOnField(figure){
+        can.each(figure.getPosCells(), function(val, index){
+            expect(field.getXY(val.x, val.y).state).not.toEqual("empty");
+        });
+    }
+    
     it("should be create on center and top", function() {
         expect(targetFigure.posx).toEqual(5);
         expect(targetFigure.posy).toEqual(29);
+        isReflectOnField(targetFigure);
     });
     
     it("in the come-down should be reduce posy", function(){
         targetFigure.come_down();
         expect(targetFigure.posy).toEqual(28);
+        isReflectOnField(targetFigure);
     });
     
     it("on create should be random", function (){
@@ -23,7 +31,8 @@ describe("figure", function() {
     });
     
     it("should be able to rotate", function(){
-        expect(targetFigure.rotate).not.toThrow();
+        expect(function (){targetFigure.rotate("left");}).not.toThrow();
+        isReflectOnField(targetFigure);
     });
     
     it("should be able to return the occupied cells, by method: getPosCells", function(){
@@ -37,9 +46,7 @@ describe("figure", function() {
     describe("should be reflect on field", function(){
         it("when creating the figure cells underneath the field must be filled", function(){
             targetFigure = new Figure();
-            can.each(targetFigure.getPosCells(), function(val, index){
-                expect(field.getXY(val.x, val.y).state).not.toEqual("empty");
-            });
+            isReflectOnField(targetFigure);
         });
     });
 });
