@@ -1,6 +1,12 @@
-var Figure, field;
+var Figure, field, game;
 var fieldHeight = 30, fieldWidth = 10;
 $(document).ready(function(){
+    game = new (can.Model.extend({},{
+        score: 0,
+        gameOver: function(){
+            
+        }
+    }))();
     var ALL_TYPE_FIGURE = [
         [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}]   //палка
     ];
@@ -11,7 +17,9 @@ $(document).ready(function(){
         init: function(){
             var randIndex = Math.floor(Math.random() * (ALL_TYPE_FIGURE.length - 1));
             this.attr('cells', ALL_TYPE_FIGURE[randIndex]);
-            this.reflectOnField();
+            if(!this.reflectOnField()){
+                game.gameOver();
+            }
         },
         come_down: function(){
             this.eraseMeFromField();
@@ -27,21 +35,32 @@ $(document).ready(function(){
         },
         reflectOnField: function (){
             var _this = this;
+            var allCellIsFree = true;
             can.each(_this.getPosCells(), function(val){
-                field.getXY(val.x, val.y).attr("state", "red");
+                var cell = field.getXY(val.x, val.y);
+                if (cell){
+                    if (cell.state != "empty"){
+                        allCellIsFree = false;
+                    }
+                    cell.attr("style_class", "red");
+                }
             });
+            return allCellIsFree;
         },
         eraseMeFromField: function(){
             var _this = this;
-            can.each(_this.getPosCells(), function(val){
-                field.getXY(val.x, val.y).attr("state", "empty");
+            can.each(_this.getPosCells(), function(val){                
+                var cell = field.getXY(val.x, val.y);
+                if (cell){
+                    cell.attr("style_class", "empty");
+                }
             });
         },
         rotate: function (rightOrLeft){
             var _this = this;
             var newCells = [];
             var nothingNoOccupied = true;
-            can.each(this.cells, function(val){
+            can.each(_this.cells, function(val){
                 var newVal;
                 if (rightOrLeft == "right"){
                     newVal = {x: val.y, y: -val.x};
@@ -54,9 +73,9 @@ $(document).ready(function(){
                 newCells.push(newVal);
             });
             if (nothingNoOccupied){
-                this.eraseMeFromField();
-                this.attr("cells", newCells);
-                this.reflectOnField();
+                _this.eraseMeFromField();
+                _this.attr("cells", newCells);
+                _this.reflectOnField();
             }
         }
     });

@@ -10,7 +10,10 @@ describe("figure", function() {
     
     function isReflectOnField(figure){
         can.each(figure.getPosCells(), function(val, index){
-            expect(field.getXY(val.x, val.y).state).not.toEqual("empty");
+            var cell = field.getXY(val.x, val.y);
+            if (cell){
+                expect(cell.style_class).not.toEqual("empty");
+            }
         });
     }
     
@@ -43,11 +46,34 @@ describe("figure", function() {
         });
     });
     
-    describe("should be reflect on field", function(){
-        it("when creating the figure cells underneath the field must be filled", function(){
-            targetFigure = new Figure();
-            isReflectOnField(targetFigure);
+    describe("movement should take account of the field", function(){
+        beforeEach(function(){
+            field.each(function(val, index){
+                field[index].attr("style_class","empty")
+                field[index].attr("state","empty");
+            });
         });
+        
+        it("reflectOnField should be return FALSE if the cells under figure is occupied", function(){
+            field.getXY(5,29).attr("state", "red");     field.getXY(4,29).attr("state", "red");
+            field.getXY(6,29).attr("state", "red");     field.getXY(3,29).attr("state", "red");
+            targetFigure = new Figure();
+            expect(targetFigure.reflectOnField()).toEqual(false);
+        });
+        
+        it("reflectOnField should be return TRUE if the cells under figure is not occupied", function(){
+            targetFigure = new Figure();
+            expect(targetFigure.reflectOnField()).toEqual(true);
+        });
+        
+        it("when the figure is created in the occupied cells, the game must end.", function(){
+            field.getXY(5,29).attr("state", "red");     field.getXY(4,29).attr("state", "red");
+            field.getXY(6,29).attr("state", "red");     field.getXY(3,29).attr("state", "red");
+            spyOn(game, "gameOver");
+            targetFigure = new Figure();
+            expect(game.gameOver).toHaveBeenCalled();
+        });
+        
     });
 });
 
