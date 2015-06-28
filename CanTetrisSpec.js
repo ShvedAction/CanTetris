@@ -34,7 +34,16 @@ describe("figure", function() {
     });
     
     it("should be able to rotate", function(){
-        expect(function (){targetFigure.rotate("left");}).not.toThrow();
+        expect(function (){targetFigure.rotate(-1);}).not.toThrow();
+        isReflectOnField(targetFigure);
+    });
+    
+    it("should be able to move horizontal",function(){
+        targetFigure.moveHorizontal(1);
+        expect(targetFigure.posx).toEqual(6);
+        isReflectOnField(targetFigure);
+        targetFigure.moveHorizontal(-1);
+        expect(targetFigure.posx).toEqual(5);
         isReflectOnField(targetFigure);
     });
     
@@ -74,6 +83,26 @@ describe("figure", function() {
             expect(game.gameOver).toHaveBeenCalled();
         });
         
+        it("It does not have to turn around and move in a horizontal line when there is a hurdle", function(){
+            var figure = new Figure();
+            field.each(function(val){
+                if (val.attr("style_class") == "empty"){
+                    val.attr("state","red");
+                    val.attr("style_class","red");
+                }
+            });
+            var originalCells = $.extend(true,{},figure.attr("cells"));
+            figure.rotate(-1);
+            figure.attr("cells").each(function(val, index){
+                expect(val.x).toEqual(originalCells[index].x);
+                expect(val.y).toEqual(originalCells[index].y);
+            });
+            figure.moveHorizontal(1);
+            figure.attr("cells").each(function(val, index){
+                expect(val.x).toEqual(originalCells[index].x);
+                expect(val.y).toEqual(originalCells[index].y);
+            });
+        });
     });
 });
 

@@ -24,7 +24,18 @@ $(document).ready(function(){
         come_down: function(){
             this.eraseMeFromField();
             this.attr("posy", this.posy-1);
-            this.reflectOnField();
+            if(!this.reflectOnField()){
+                this.eraseMeFromField();
+                this.attr("posy", this.posy+1);
+                this.reflectOnField();
+            }
+        },
+        moveHorizontal: function(deltX){
+            this.eraseMeFromField();
+            this.attr("posx", this.posx+deltX);
+            if(!this.reflectOnField()){
+                this.moveHorizontal(-deltX);
+            }
         },
         getPosCells: function(){
             var result = [], _this = this;
@@ -51,23 +62,22 @@ $(document).ready(function(){
             var _this = this;
             can.each(_this.getPosCells(), function(val){                
                 var cell = field.getXY(val.x, val.y);
-                if (cell){
+                if (cell && cell.state === "empty"){
                     cell.attr("style_class", "empty");
                 }
             });
         },
-        rotate: function (rightOrLeft){
+        rotate: function (rightOrLeft){  //1 - right;   -1 - left
             var _this = this;
             var newCells = [];
             var nothingNoOccupied = true;
             can.each(_this.cells, function(val){
                 var newVal;
-                if (rightOrLeft == "right"){
-                    newVal = {x: val.y, y: -val.x};
-                }else{
-                    newVal = {x: -val.y, y: val.x};
-                }
-                if (field.getXY(val.x+_this.posx, val.y+_this.posy).state != "empty"){
+                newVal = {x: rightOrLeft*val.y, y: -rightOrLeft*val.x};
+                var x = newVal.x+_this.posx;
+                var y = newVal.y+_this.posy;
+                var cellOnField = field.getXY(x, y);
+                if (cellOnField && cellOnField.state != "empty"){
                     nothingNoOccupied = false;
                 }
                 newCells.push(newVal);
@@ -75,7 +85,9 @@ $(document).ready(function(){
             if (nothingNoOccupied){
                 _this.eraseMeFromField();
                 _this.attr("cells", newCells);
-                _this.reflectOnField();
+                if(!_this.reflectOnField()){
+                    _this.rotate(-rightOrLeft);
+                }
             }
         }
     });
