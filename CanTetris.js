@@ -1,14 +1,24 @@
-var Figure, field, game;
+var Figure, field, game, figure;
 var fieldHeight = 30, fieldWidth = 10;
 $(document).ready(function(){
     game = new (can.Model.extend({},{
         score: 0,
         gameOver: function(){
             
-        }
+        },
+		start: function(){
+			figure = new Figure({});
+			figure.come_down();
+			this.intervalId = setInterval(function(){
+				figure.come_down();
+			}, 1000);
+		},
+		stop: function (){
+			clearInterval(this.intervalId);
+		}
     }))();
     var ALL_TYPE_FIGURE = [
-        [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}]   //палка
+        [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}]   //РїР°Р»РєР°
     ];
     
     Figure = can.Model.extend({},{
