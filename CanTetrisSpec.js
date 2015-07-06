@@ -116,3 +116,19 @@ describe("field", function(){
         expect(field.attr(32)).toBe(field.getXY(2,3));
     });
  });
+ 
+describe("game", function(){
+	it("it should be able to start and stop.", function (){
+		expect(function (){game.start();}).not.toThrow();
+		expect(function (){game.stop();}).not.toThrow();
+	});
+	
+	it("should cause every second figure.come_down.", function(){
+		jasmine.clock().install();
+		var countCall = 0;
+		game.start();
+		spyOn(figure, 'come_down');
+		jasmine.clock().tick(3001);
+		expect(figure.come_down.calls.count()).toEqual(3);
+	});
+});
