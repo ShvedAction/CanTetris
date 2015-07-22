@@ -104,6 +104,23 @@ describe("figure", function() {
             });
         });
     });
+    
+    describe("when on come down not make", function (){
+        beforeEach(function(){
+            field.each(function(val, index){
+                field[index].attr("style_class","empty")
+                field[index].attr("state","empty");
+            });
+        });
+        
+        it("come down not make if figure on the bottom line field", function (){
+            
+        });
+        
+        it("should be fill cells on field under figure", function(){
+            
+        });
+    });
 });
 
 describe("field", function(){
