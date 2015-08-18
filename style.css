@@ -1,0 +1,26 @@
+div{
+    display: block;
+}
+
+#field {
+    height:100%;
+    background-color: #0000ff;
+    width:200px;
+    overflow:hidden;
+    margin:auto;
+}
+
+.cell{
+    /*width:20px;
+    height:20px;*/
+    width:18px;
+    height:18px;
+    margin:1px;
+    float: left;
+}
+.empty{
+    background-color:#fff;
+}
+.red{
+    background-color:#ff0000;
+}

@@ -1,4 +1,4 @@
-var Figure, field, game, figure;
+var Figure, field, game, figure, ALL_TYPE_FIGURE;
 var fieldHeight = 30, fieldWidth = 10;
 $(document).ready(function(){
     game = new (can.Model.extend({},{
@@ -17,7 +17,7 @@ $(document).ready(function(){
 			clearInterval(this.intervalId);
 		}
     }))();
-    var ALL_TYPE_FIGURE = [
+    ALL_TYPE_FIGURE = [
         [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}]   //РїР°Р»РєР°
     ];
     
@@ -38,6 +38,11 @@ $(document).ready(function(){
                 this.eraseMeFromField();
                 this.attr("posy", this.posy+1);
                 this.reflectOnField();
+                can.each(this.getPosCells(), function(val){
+                    var fillCell = field.getXY(val.x, val.y);
+                    fillCell.attr("state", val.style_classs)
+                });
+                figure = new Figure({});
             }
         },
         moveHorizontal: function(deltX){
@@ -108,6 +113,33 @@ $(document).ready(function(){
         field.attr(i, new can.Model({style_class: "empty", state: "empty"}));
     }
     field.getXY = function(x,y){
-        return this.attr(y*fieldWidth + x);
+        if((x <= 0) || (x > fieldWidth) || (y < 0)){
+            return {state: "not field", attr: function(){}}
+        }
+        return this.attr(fieldHeight*fieldWidth - (y*fieldWidth + x));
     }
+    
+    $("#field").html(can.view('templateOfField', field));
+    game.start();
+    var onceClickOnceEvent = true; 
+    $(document).delegate("*","keydown", function(key){
+        //console.log(key.keyCode);
+        onceClickOnceEvent = !onceClickOnceEvent; //Дважды вызывается зараза.
+        if(onceClickOnceEvent){
+            return false;
+        }
+        if (key.keyCode == 39){
+            figure.moveHorizontal(-1);
+        }
+        if (key.keyCode == 37){
+            figure.moveHorizontal(1);
+        }
+        if (key.keyCode == 38){
+            figure.rotate(1);
+        }
+        if (key.keyCode == 40){
+            figure.come_down();
+        }
+        
+    });
 });

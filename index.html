@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CanTetris</title>
+  
+  <script src="can/jquery-1.11.3.min.js"></script>
+  <script src="can/can.jquery.js"></script>
+  
+  <!-- include source files here... -->
+  <script src="CanTetris.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+    <div id="field">
+    
+    </div>
+    
+    <script type="text/mustache" id="templateOfField">
+        {{#each .}}
+            <div class="cell {{style_class}}"></div>
+        {{/each}}
+    </script>
+<body>
+</body>
+</html>

@@ -114,7 +114,11 @@ describe("figure", function() {
         });
         
         it("come down not make if figure on the bottom line field", function (){
-            
+            var figure = new Figure();
+            figure.attr('cells', ALL_TYPE_FIGURE[0]);  //must be stick
+            figure.attr('posy', 0);
+            figure.come_down();
+            //todo
         });
         
         it("should be fill cells on field under figure", function(){
@@ -124,6 +128,14 @@ describe("figure", function() {
 });
 
 describe("field", function(){
+    beforeEach(function(){
+        field.each(function(val, index){
+            field[index].attr("style_class","empty")
+            field[index].attr("state","empty");
+        });
+    });
+        
+        
     it("should be the double array 5x30 collapsed to the list: length == 300", function(){
         expect(field.attr("length")).toEqual(300);
     });
@@ -148,4 +160,15 @@ describe("game", function(){
 		jasmine.clock().tick(3001);
 		expect(figure.come_down.calls.count()).toEqual(3);
 	});
+});
+
+describe("canva", function (){
+        
+    it("every cell of work field sould be 20x20",function(){
+        
+    });
+    
+    it("width of work field should be quantety of cell on line multiple on width of cell", function(){
+        
+    });
 });
