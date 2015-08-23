@@ -7,25 +7,35 @@ $(document).ready(function(){
             
         },
 		start: function(){
-			figure = new Figure({});
+			this.nextFigure();
 			figure.come_down();
 			this.intervalId = setInterval(function(){
 				figure.come_down();
 			}, 1000);
 		},
+        nextFigure: function(){
+            figure = new Figure({});
+            field.cleanFilledCell();
+        },
 		stop: function (){
 			clearInterval(this.intervalId);
 		}
     }))();
     ALL_TYPE_FIGURE = [
-        [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}]   //палка
+        [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}],
+        [{x: 0 ,y:1},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}],
+        [{x: 0 ,y:1},{x:0 ,y:0},{x:1 ,y:1},{x:1 ,y:0}],
+        [{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0},{x:1 ,y:1}],
+        [{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0},{x:1 ,y:-1}],
+        [{x:-1 ,y:-1},{x:0 ,y:-1},{x:0 ,y:0},{x:1 ,y:0}],
+        [{x:-1 ,y:1},{x:0 ,y:1},{x:0 ,y:0},{x:1 ,y:0}]
     ];
     
     Figure = can.Model.extend({},{
         posx: 5,
         posy: 29,
         init: function(){
-            var randIndex = Math.floor(Math.random() * (ALL_TYPE_FIGURE.length - 1));
+            var randIndex = Math.floor(Math.random() * (ALL_TYPE_FIGURE.length));
             this.attr('cells', ALL_TYPE_FIGURE[randIndex]);
             if(!this.reflectOnField()){
                 game.gameOver();
@@ -42,8 +52,8 @@ $(document).ready(function(){
                     var fillCell = field.getXY(val.x, val.y);
                     fillCell.attr("state", val.style_classs)
                 });
-                figure = new Figure({});
-            }
+                game.nextFigure();
+           }
         },
         moveHorizontal: function(deltX){
             this.eraseMeFromField();
@@ -118,6 +128,30 @@ $(document).ready(function(){
         }
         return this.attr(fieldHeight*fieldWidth - (y*fieldWidth + x));
     }
+    field.cleanFilledCell = function(){
+        var quantety = 0;
+        for (var y = fieldHeight-1; y >=0; y--){
+            var allCellFilled = true;
+            for (var x = 0; x< fieldWidth; x++)
+                if(this.getXY(x,y).state == "empty")
+                    allCellFilled = false;
+            if (allCellFilled){
+                quantety++;
+                for (var x = 0; x< fieldWidth; x++){
+                    this.getXY(x,y).attr("state", "empty");
+                    this.getXY(x,y).attr("style_class", "empty");
+                }
+                for (var y1 = y; y1<fieldHeight-1; y1++){
+                    for (var x = 0; x< fieldWidth; x++){
+                        var uperCell = this.getXY(x,y1+1);
+                        this.getXY(x,y1).attr("state", uperCell.state);
+                        this.getXY(x,y1).attr("style_class", uperCell.style_class);
+                    }
+                }
+            }
+        }
+        return quantety;
+    };
     
     $("#field").html(can.view('templateOfField', field));
     game.start();
