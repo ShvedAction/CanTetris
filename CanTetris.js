@@ -30,12 +30,15 @@ $(document).ready(function(){
         [{x:-1 ,y:-1},{x:0 ,y:-1},{x:0 ,y:0},{x:1 ,y:0}],
         [{x:-1 ,y:1},{x:0 ,y:1},{x:0 ,y:0},{x:1 ,y:0}]
     ];
+    var ALL_TYPE_COLOR = ["red", "green", "blue", "brown", "yellow"];
+    
     
     Figure = can.Model.extend({},{
         posx: 5,
         posy: 29,
         init: function(){
             var randIndex = Math.floor(Math.random() * (ALL_TYPE_FIGURE.length));
+            this.attr("color", ALL_TYPE_COLOR[Math.floor(Math.random() * (ALL_TYPE_COLOR.length))]);
             this.attr('cells', ALL_TYPE_FIGURE[randIndex]);
             if(!this.reflectOnField()){
                 game.gameOver();
@@ -78,10 +81,13 @@ $(document).ready(function(){
                     if (cell.state != "empty"){
                         allCellIsFree = false;
                     }
-                    cell.attr("style_class", "red");
+                    else{
+                        cell.attr("style_class", _this.color);
+                    }
                 }
             });
             return allCellIsFree;
+            
         },
         eraseMeFromField: function(){
             var _this = this;
@@ -123,14 +129,14 @@ $(document).ready(function(){
         field.attr(i, new can.Model({style_class: "empty", state: "empty"}));
     }
     field.getXY = function(x,y){
-        if((x <= 0) || (x > fieldWidth) || (y < 0)){
-            return {state: "not field", attr: function(){}}
+        if((x >= 0) && (x < fieldWidth) && (y >= 0) && (y < fieldHeight)){
+            return this.attr(fieldHeight*fieldWidth - (y*fieldWidth + x) -1);
         }
-        return this.attr(fieldHeight*fieldWidth - (y*fieldWidth + x));
+        return {state: "not field", attr: function(){}}
     }
     field.cleanFilledCell = function(){
         var quantety = 0;
-        for (var y = fieldHeight-1; y >=0; y--){
+        for (var y = fieldHeight-1; y >= 0; y--){
             var allCellFilled = true;
             for (var x = 0; x< fieldWidth; x++)
                 if(this.getXY(x,y).state == "empty")
@@ -141,7 +147,7 @@ $(document).ready(function(){
                     this.getXY(x,y).attr("state", "empty");
                     this.getXY(x,y).attr("style_class", "empty");
                 }
-                for (var y1 = y; y1<fieldHeight-1; y1++){
+                for (var y1 = y; y1 < fieldHeight-1; y1++){
                     for (var x = 0; x< fieldWidth; x++){
                         var uperCell = this.getXY(x,y1+1);
                         this.getXY(x,y1).attr("state", uperCell.state);

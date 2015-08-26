@@ -10,17 +10,17 @@
   <!-- include source files here... -->
   <script src="CanTetris.js"></script>
   <link rel="stylesheet" href="style.css">
-</head>
-
-    <div id="field">
-    
-    </div>
-    
     <script type="text/mustache" id="templateOfField">
         {{#each .}}
             <div class="cell {{style_class}}"></div>
         {{/each}}
     </script>
+</head>
+
+    
 <body>
+    <div id="field">
+    
+    </div>
 </body>
 </html>
