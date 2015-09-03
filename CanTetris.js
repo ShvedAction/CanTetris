@@ -3,24 +3,30 @@ var fieldHeight = 30, fieldWidth = 10;
 $(document).ready(function(){
     game = new (can.Model.extend({},{
         score: 0,
+        countFigure: 0,
+        status: "none",
         gameOver: function(){
             
         },
 		start: function(){
 			this.nextFigure();
 			figure.come_down();
+            this.attr("score", 0);
+            this.attr("countFigure", 0);
+            this.attr("status", "in game");
 			this.intervalId = setInterval(function(){
 				figure.come_down();
 			}, 1000);
 		},
         nextFigure: function(){
             figure = new Figure({});
-            field.cleanFilledCell();
+            this.attr("score", game.score + field.cleanFilledCell()*10);
         },
 		stop: function (){
 			clearInterval(this.intervalId);
+            this.attr("status", "stop");
 		}
-    }))();
+    }))({});
     ALL_TYPE_FIGURE = [
         [{x:-2 ,y:0},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}],
         [{x: 0 ,y:1},{x:-1 ,y:0},{x:0 ,y:0},{x:1 ,y:0}],
@@ -34,12 +40,14 @@ $(document).ready(function(){
     
     
     Figure = can.Model.extend({},{
-        posx: 5,
+        posx: 4,
         posy: 29,
         init: function(){
             var randIndex = Math.floor(Math.random() * (ALL_TYPE_FIGURE.length));
             this.attr("color", ALL_TYPE_COLOR[Math.floor(Math.random() * (ALL_TYPE_COLOR.length))]);
             this.attr('cells', ALL_TYPE_FIGURE[randIndex]);
+            game.attr("countFigure", game.countFigure+1);
+            console.log(game)
             if(!this.reflectOnField()){
                 game.gameOver();
             }
@@ -160,6 +168,8 @@ $(document).ready(function(){
     };
     
     $("#field").html(can.view('templateOfField', field));
+    $("#status").html(can.view('templateOfStatusGame', game));
+    
     game.start();
     var onceClickOnceEvent = true; 
     $(document).delegate("*","keydown", function(key){

@@ -7,9 +7,30 @@ div{
     background-color: #000000;
     width:200px;
     overflow:hidden;
-    margin:auto;
+    float:left;
+    margin-top: 20px;
 }
-
+#wrapper {
+    height:100%;
+    overflow:hidden;
+    margin:auto;
+    width:450px;
+}
+p{
+    margin:0;
+}
+h1{
+    margin: auto;
+    display: block;
+    overflow: hidden;
+    margin-left: auto;
+    width: 225px;
+    margin-bottom: 20px;
+}
+#status{
+    float: right;
+    margin-left:50px;
+}
 .cell{
     /*width:20px;
     height:20px;*/
